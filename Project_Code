@@ -1,0 +1,114 @@
+# My proposed project with Carnegie and Perkins
+
+
+# Open files
+Perkins=open("PerkinsCSVAlph.csv","r") # Need both files alphabetized by name
+Carnegie=open("CarnegieCSV.csv","r")
+
+# Read lines
+linesP=Perkins.readlines()[1:] # This reads the lines, skips the header (first line)
+linesC=Carnegie.readlines()[1:] # This reads the lines, skips the header 
+
+# The list of all unique colleges:
+CollNameP = []
+CollNameC = []
+for line in linesP:
+    CollNameP.append(str(line.split(',')[2]))
+for line in linesC:
+    CollNameC.append(str(line.split(',')[1]))
+College = [col for col in CollNameP if col in CollNameC]
+
+# Make Columns for Perkins
+CollNamePU = [] # Name of unique institutions from Perkins (short)
+BInRep = [] # Borrowers in repayment in 2014-2015
+BInDef = [] # Borrowers in default on June 30, 2016
+
+   
+for line in linesP:
+    if str(line.split(',')[2]) in College: # If the perkins college is in both..
+        CollNamePU.append(str(line.split(',')[2]))
+        BInRep.append(int(line.split(',')[7]))
+        BInDef.append(int(line.split(',')[8]))
+    else:
+        continue
+
+# Make Columns for Carnegie
+CollNameCU = [] # Name of unique institution from Carnegie (long)
+CarnClass = [] # Carnegie Classification
+Sector = [] # Sector from Carn file
+
+for line in linesC:
+    if str(line.split(',')[1]) in College: # If the Carnegie college is in both.. 
+        CollNameCU.append(str(line.split(',')[1]))
+        CarnClass.append(int(line.split(',')[7]))
+        Sector.append(int(line.split(',')[14]))
+    else: 
+        continue
+    
+# Close files
+Perkins.close()
+Carnegie.close()
+
+"""
+#Define the percent of defaulters
+PercDef = [] # Percent Defaulters
+a = 0
+while a < len(College):
+    if BInRep[a] == 0:
+        PercDef.append(0)
+        a += 1 
+    else:
+        PercDef.append(float(BInDef[a]/BInRep[a]))
+        a += 1
+"""
+
+# Bin the Carnegies
+CarnBin = [i for i in range(34)] # The index corresponds to the value
+
+# Find the average PercDef in each bin
+DefSum = [0]*34 # Sum of people in default
+PercDef = [0]*34
+BorSum = [0]*34 # Sum of people borrowing
+CarnCount = []
+
+d = 0
+while d < len(CarnClass):
+    DefSum[CarnClass[d]] += BInDef[d] #Add a count of each carnegie that is in default..
+    BorSum[CarnClass[d]] += BInRep[d] # ..Or borrowing
+    d += 1
+    
+#for e in range(34): # Count the number of each carns
+#    CarnCount.append(CarnClass.count(e))
+    
+f = 0
+while f < len(CarnBin):
+    if BorSum[f] != 0:
+        PercDef.append(float(DefSum[f]/BorSum[f]))
+    else:
+        PercDef.append(0)
+    f += 1
+
+#print(College[0:4])
+
+#print(CollNameCU[0:4])
+#print(len(CollNameCU))
+#print(CarnClass[0:4])
+#print(len(CarnClass))
+#print(Sector[0:4])
+#print(len(Sector))
+
+#print(CollNamePU[0:4])
+#print(len(CollNamePU))
+
+#print(BInRep[0:4])
+#print(len(BInRep))
+#print(BInDef[0:4])
+#print(len(BInDef))
+#print(PercDef[0:4])
+#print(len(PercDef))
+
+#print(CarnBin[0:4])
+#print(PercDefSum[0:4])
+print(CarnBin)
+print(PercDef[34:69])
+
